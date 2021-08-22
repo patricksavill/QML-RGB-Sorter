@@ -9,6 +9,16 @@ Window {
     width: Theme.defaultWidth
     height: Theme.defaultWidth
     title: qsTr("Hello World")
+
+    Connections {
+        target: frontEndObject
+        // Traditional QML voodoo where "on" + capitalised signal connections to this slot
+        onDisplayErrorPopup: {
+            errorText.text = errorMsg
+            errorPopup.open()
+        }
+    }
+
     // Image viewer 1
     Rectangle {
         id: imageBox1
@@ -84,15 +94,41 @@ Window {
         }
     }
 
-    //    Rectangle {
-    //        anchors.centerIn: parent
-    //        width: parent.width / 2
-    //        height: parent.height / 2
-    //        color: Theme.background
-    //        Text {
-    //            anchors.centerIn: parent
-    //            text: "Theme colour text"
-    //            color: Theme.textColour
-    //        }
-    //    }
+    Popup {
+        id: errorPopup
+        width: Theme.popupWidth
+        height: Theme.popupHeight
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        background: Rectangle {
+            anchors.fill: parent
+            color: Theme.popupBackground
+            border.color: "black"
+            border.width: Theme.borderWidth
+        }
+
+        Text {
+            id: errorText
+            anchors.centerIn: parent
+            text: ""
+        }
+        Button {
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            width: Theme.buttonWidth
+            height: Theme.buttonHeight
+            background: Rectangle {
+                radius: Theme.radius
+                color: parent.down ? Theme.buttonPressed : parent.hovered ? Theme.buttonHovered : "transparent"
+                border.color: "black"
+                border.width: Theme.borderWidth
+            }
+            text: "Ok"
+            onClicked: {
+                errorPopup.close()
+            }
+        }
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    }
 }

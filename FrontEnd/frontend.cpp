@@ -3,6 +3,7 @@
 #include <QQmlContext>
 
 #include "frontend.h"
+#include "imageprocessing.h"
 
 int main(int argc, char *argv[]) {
   QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -28,6 +29,10 @@ int main(int argc, char *argv[]) {
   return app.exec();
 }
 
+void FrontEnd::errorPopup(QString errorMsg) {
+  emit displayErrorPopup(errorMsg);
+}
+
 void FrontEnd::loadImage() {
   // TODO handle image loading logic and pass to back end, to then present to
   // front end
@@ -36,4 +41,8 @@ void FrontEnd::loadImage() {
 void FrontEnd::processImage() {
   // TODO implement the image processing
   QString result = "Received process request";
+  ImageProcessing *image_processor = new ImageProcessing();
+  connect(image_processor, &ImageProcessing::displayError, this,
+          &FrontEnd::errorPopup);
+  image_processor->sortImage("../example-image.jpg");
 }

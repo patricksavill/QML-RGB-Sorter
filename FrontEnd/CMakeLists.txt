@@ -14,6 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
+include_directories(../ImageProcessing )
+
 # Add executables
 add_executable(QML-RGB-Sorter
     frontend.h
@@ -24,5 +26,7 @@ add_executable(QML-RGB-Sorter
 
 target_compile_definitions(QML-RGB-Sorter
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(QML-RGB-Sorter
-  PRIVATE Qt5::Core Qt5::Quick)
+target_link_libraries(QML-RGB-Sorter PRIVATE Qt5::Core Qt5::Quick ImageProcessing)
+
+# Copy example image for later use
+configure_file(example-image.jpg ${CMAKE_BINARY_DIR}/example-image.jpg COPYONLY)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(QML-RGB-Sorter LANGUAGES CXX)
+project(ImageProcessing LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -14,7 +14,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
-# Add the front and back end directories
-add_subdirectory(FrontEnd)
-add_subdirectory(ImageProcessing)
 
+add_library(ImageProcessing STATIC
+    imageprocessing.cpp
+    imageprocessing.h
+)
+
+target_link_libraries(ImageProcessing PRIVATE Qt5::Core)

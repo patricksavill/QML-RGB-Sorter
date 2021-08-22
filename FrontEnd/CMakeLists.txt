@@ -14,7 +14,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
-# Add the front and back end directories
-add_subdirectory(FrontEnd)
-add_subdirectory(ImageProcessing)
+# Add executables
+add_executable(QML-RGB-Sorter
+    frontend.h
+    frontend.cpp
+    qml.qrc
+)
 
+
+target_compile_definitions(QML-RGB-Sorter
+  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+target_link_libraries(QML-RGB-Sorter
+  PRIVATE Qt5::Core Qt5::Quick)

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Theme.js</file>
+        <file>example-image.jpg</file>
+    </qresource>
+</RCC>

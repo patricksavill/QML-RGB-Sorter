@@ -1,12 +1,15 @@
 #ifndef FRONTEND_H
 #define FRONTEND_H
 
+#include "ImageProvider.h"
+#include <QImage>
 #include <QObject>
 
 class FrontEnd : public QObject {
   Q_OBJECT
 public:
   FrontEnd(QObject *parent = nullptr) {}
+  ImageProvider mProvider{};
 
 public slots:
 
@@ -23,10 +26,16 @@ public slots:
   void loadImage();
 
   /*!
-   * \brief processImage parent signal that should take in the image and sorting
+   * \brief processImage parent slot that should take in the image and sorting
    * metric then pass this onto the back end
    */
   void processImage();
+
+  /*!
+   * \brief updateImage Slot to push a new QImage to and refresh the UI with
+   * \param newImage    QImage to show in the UI
+   */
+  void updateImage(QImage newImage);
 
 signals:
   /*!

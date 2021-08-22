@@ -20,6 +20,10 @@ include_directories(../ImageProcessing )
 add_executable(QML-RGB-Sorter
     frontend.h
     frontend.cpp
+    LiveImage.cpp
+    LiveImage.h
+    ImageProvider.cpp
+    ImageProvider.h
     qml.qrc
 )
 

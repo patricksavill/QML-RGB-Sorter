@@ -1,15 +1,73 @@
 #include "imageprocessing.h"
+#include <iostream>
 
 ImageProcessing::ImageProcessing() {}
 
 QImage ImageProcessing::sortImage(QString inputImagePath) {
 
-  QFile inputPath(inputImagePath);
-  if (!inputPath.exists()) {
+  QFile input_path(inputImagePath);
+  if (!input_path.exists()) {
     emit displayError("The input image doesn't exist");
     return QImage();
   }
   QImageReader reader(inputImagePath);
 
-  return QImage();
+  std::shared_ptr<QImage> input_image = std::make_shared<QImage>(reader.read());
+  if (input_image == nullptr) {
+    return QImage();
+  }
+
+  QImage sorted_image = bubble_sort(input_image);
+
+  return sorted_image;
+}
+
+QImage ImageProcessing::bubble_sort(std::shared_ptr<QImage> unsortedImage) {
+
+  const auto max_threads = std::thread::hardware_concurrency();
+  std::vector<std::thread> thread_vector;
+
+  int y_range = unsortedImage->height();
+
+  for (int thread_num = 0; thread_num < max_threads; thread_num++) {
+    int start = thread_num * y_range / max_threads;
+    int end = (thread_num + 1) * y_range / max_threads;
+    if (end > y_range) {
+      end = y_range;
+    }
+    std::cout << "Start: " << start << "End: " << end << std::endl;
+    std::thread th(bubble_sort_thread, unsortedImage, start, end);
+    thread_vector.push_back(std::move(th));
+  }
+
+  for (std::thread &th : thread_vector) {
+    if (th.joinable()) {
+      th.join();
+    }
+  }
+
+  return *unsortedImage;
+}
+
+void ImageProcessing::bubble_sort_thread(std::shared_ptr<QImage> unsortedImage,
+                                         int y_start, int y_end) {
+  int x_range = unsortedImage->width();
+  for (int j = y_start; j < y_end; j++) {
+    for (int z = 0; z < x_range; z++) {
+      for (int i = 0; i < x_range - 1; i++) {
+        QColor a = unsortedImage->pixelColor(i, j);
+        QColor b = unsortedImage->pixelColor(i + 1, j);
+        if (intensity_compare(a, b)) {
+          unsortedImage->setPixelColor(i + 1, j, a);
+          unsortedImage->setPixelColor(i, j, b);
+        } else {
+          continue;
+        }
+      }
+    }
+  }
+}
+
+bool ImageProcessing::intensity_compare(QColor a, QColor b) {
+  return ((a.red() + a.green() + a.blue()) > (b.red() + b.green() + b.blue()));
 }

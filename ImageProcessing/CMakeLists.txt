@@ -14,10 +14,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Gui REQUIRED)
 
-
 add_library(ImageProcessing STATIC
     imageprocessing.cpp
     imageprocessing.h
 )
 
-target_link_libraries(ImageProcessing PRIVATE Qt5::Core Qt5::Gui)
+target_link_libraries(ImageProcessing PRIVATE Qt5::Core Qt5::Gui pthread)

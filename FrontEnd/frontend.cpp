@@ -49,23 +49,22 @@ void FrontEnd::loadImage() {
 }
 
 void FrontEnd::processImage() {
-  // TODO implement the image processing
+  // TODO implement the image processing and function passing
   QString result = "Received process request";
   ImageProcessing *image_processor = new ImageProcessing();
   connect(image_processor, &ImageProcessing::displayError, this,
           &FrontEnd::errorPopup);
   QImage sorted_image = image_processor->sortImage("../example-image.jpg");
 
-  // TODO add in null check of the returned sorted image
+  if (sorted_image.isNull()) {
+    errorPopup("Image could not be sorted");
+    return;
+  }
 
   updateImage(sorted_image);
 }
 
 void FrontEnd::updateImage(QImage newImage) {
 
-  // TODO use the passed in image, as currently it updates with a random solid
-  // colour
-  QImage image(100, 100, QImage::Format_ARGB32);
-  image.fill(QColor(qrand() % 255, qrand() % 255, qrand() % 255));
-  this->mProvider.setImage(image);
+  this->mProvider.setImage(newImage);
 }

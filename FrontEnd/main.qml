@@ -3,6 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 
 import "Theme.js" as Theme
+import MyApp.Images 1.0
 
 Window {
     visible: true
@@ -56,10 +57,11 @@ Window {
             text: "Image not processed yet."
         }
 
-        Image {
+        LiveImage {
             id: rgbSortedImage
             anchors.margins: Theme.imageMargins
             anchors.fill: parent
+            image: LiveImageProvider.image
         }
     }
 

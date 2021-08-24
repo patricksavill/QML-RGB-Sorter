@@ -49,13 +49,15 @@ void FrontEnd::loadImage() {
 }
 
 void FrontEnd::processImage() {
-  // TODO implement the image processing and function passing
   QString result = "Received process request";
   ImageProcessing *image_processor = new ImageProcessing();
   connect(image_processor, &ImageProcessing::displayError, this,
           &FrontEnd::errorPopup);
-  QImage sorted_image = image_processor->sortImage(
-      "../example-image.jpg", ImageProcessing::BUBBLE_SORT);
+  connect(image_processor, &ImageProcessing::sortingTimeTaken, this,
+          &FrontEnd::updateSortTime);
+
+  QImage sorted_image = image_processor->SortImage(
+      "../example-image.jpg", ImageProcessing::INSERTION_SORT);
 
   if (sorted_image.isNull()) {
     errorPopup("Image could not be sorted");
@@ -68,4 +70,9 @@ void FrontEnd::processImage() {
 void FrontEnd::updateImage(QImage newImage) {
 
   this->mProvider.setImage(newImage);
+}
+
+void FrontEnd::updateSortTime(double sortingTime) {
+  emit displaySortingTime(
+      QString("Sorting took: %0 s").arg(sortingTime, 0, 'g', 3));
 }

@@ -18,6 +18,9 @@ Window {
             errorText.text = errorMsg
             errorPopup.open()
         }
+        onDisplaySortingTime: {
+            sortingDurationText.text = sortingText
+        }
     }
 
     // Image viewer 1
@@ -39,6 +42,7 @@ Window {
             anchors.margins: Theme.imageMargins
             anchors.fill: parent
             source: "example-image.jpg"
+            fillMode: Image.PreserveAspectFit
         }
     }
 
@@ -93,6 +97,15 @@ Window {
             onClicked: {
                 frontEndObject.processImage()
             }
+        }
+
+        Text{
+            id: sortingDurationText
+            anchors.right:parent.right
+            anchors.left:parent.left
+            anchors.bottom: parent.bottom
+            anchors.margins: Theme.imageMargins
+            text: "Sorting time: 0ms"
         }
     }
 

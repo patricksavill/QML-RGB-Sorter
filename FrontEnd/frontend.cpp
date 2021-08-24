@@ -54,7 +54,8 @@ void FrontEnd::processImage() {
   ImageProcessing *image_processor = new ImageProcessing();
   connect(image_processor, &ImageProcessing::displayError, this,
           &FrontEnd::errorPopup);
-  QImage sorted_image = image_processor->sortImage("../example-image.jpg");
+  QImage sorted_image = image_processor->sortImage(
+      "../example-image.jpg", ImageProcessing::BUBBLE_SORT);
 
   if (sorted_image.isNull()) {
     errorPopup("Image could not be sorted");

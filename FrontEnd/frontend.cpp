@@ -57,7 +57,7 @@ void FrontEnd::processImage() {
           &FrontEnd::updateSortTime);
 
   QImage sorted_image = image_processor->SortImage(
-      "../example-image.jpg", ImageProcessing::INSERTION_SORT);
+      "../example-image.jpg", ImageProcessing::SELECTION_SORT);
 
   if (sorted_image.isNull()) {
     errorPopup("Image could not be sorted");

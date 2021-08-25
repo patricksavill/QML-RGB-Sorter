@@ -11,7 +11,7 @@ class ImageProcessing : public QObject {
 public:
   ImageProcessing();
 
-  enum SortAlgorithm { BUBBLE_SORT, INSERTION_SORT };
+  enum SortAlgorithm { BUBBLE_SORT, SELECTION_SORT };
 
   /*!
    * \brief SortImage Basic function to sort an image's pixels
@@ -58,24 +58,24 @@ private:
                                bool (*metric)(QColor, QColor));
 
   /*!
-   * \brief InsertionSort Parent function to call the insertion sort threads
+   * \brief SelectionSort Parent function to call the Selection sort threads
    * \param unsortedImage Pointer to the unsorted QImage to sort
    * \return
    */
-  QImage InsertionSort(std::shared_ptr<QImage> unsortedImage,
-                       bool (*metric)(QColor, QColor));
+  QImage SelectionSort(std::shared_ptr<QImage> unsortedImage,
+                       bool (*metric)(QRgb, QRgb));
 
   /*!
-   * \brief InsertionSortThread thread to perform insertion sort with
+   * \brief SelectionSortThread thread to perform Selection sort with
    * \param unsortedImage Shared pointer to unsorted image
    * \param y_start Vertical index to start on
    * \param y_end Vertical index to end on
    * \param *metric Function pointer to the metric used for sorting
    * \return None, sort is done in place on the shared pointer
    */
-  static void InsertionSortThread(std::shared_ptr<QImage> unsortedImage,
+  static void SelectionSortThread(std::shared_ptr<QImage> unsortedImage,
                                   int y_start, int y_end,
-                                  bool (*metric)(QColor, QColor));
+                                  bool (*metric)(QRgb, QRgb));
 
   /*!
    * \brief IntensityCompare Comparison function to compare intensity of
@@ -85,6 +85,8 @@ private:
    * \return True if a > b
    */
   static bool IntensityCompare(QColor a, QColor b);
+
+  static bool IntensityCompare(QRgb a, QRgb b);
 };
 
 #endif // IMAGEPROCESSING_H

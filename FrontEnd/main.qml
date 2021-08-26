@@ -126,7 +126,9 @@ Window {
         Text {
             id: errorText
             anchors.centerIn: parent
+            width: parent.width
             text: ""
+            wrapMode: Text.Wrap
         }
         Button {
             anchors.right: parent.right

@@ -12,13 +12,15 @@ QImage ImageProcessing::SortImage(QString inputImagePath, int sortingAlg) {
 
   QFile input_path(inputImagePath);
   if (!input_path.exists()) {
-    emit displayError("The input image doesn't exist");
+    emit displayError(
+        QString("The input image doesn't exist: %0").arg(inputImagePath));
     return QImage();
   }
   QImageReader reader(inputImagePath);
 
   std::shared_ptr<QImage> input_image = std::make_shared<QImage>(reader.read());
   if (input_image == nullptr) {
+    emit displayError("Couldn't read in image");
     return QImage();
   }
 

@@ -60,7 +60,6 @@ void FrontEnd::processImage() {
       "../example-image.jpg", ImageProcessing::SELECTION_SORT);
 
   if (sorted_image.isNull()) {
-    errorPopup("Image could not be sorted");
     return;
   }
 

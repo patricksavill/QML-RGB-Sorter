@@ -9,7 +9,8 @@ class FrontEnd : public QObject {
   Q_OBJECT
 public:
   FrontEnd(QObject *parent = nullptr) {}
-  ImageProvider mProvider{};
+  ImageProvider mLoadedProvider{};
+  ImageProvider mSortedProvider{};
 
 public slots:
 
@@ -22,20 +23,24 @@ public slots:
 
   /*!
    * \brief loadImage Called when a user is to load in a new image
+   * \param filePath QString file path passed in from QML
    */
-  void loadImage();
+  void loadImage(QString filePath);
 
   /*!
    * \brief processImage parent slot that should take in the image and sorting
    * metric then pass this onto the back end
+   * \param sortType QString sorting algorithm chosen, passed in from QML
    */
-  void processImage();
+  void processImage(QString sortType);
 
   /*!
    * \brief updateImage Slot to push a new QImage to and refresh the UI with
    * \param newImage    QImage to show in the UI
+   * \param provider    Pointer to Image Provider to use. Typically
+   * mSortedProvider or mLoadedProvider
    */
-  void updateImage(QImage newImage);
+  void updateImage(QImage newImage, ImageProvider *provider);
 
   /*!
    * \brief updateSortTime Slot to update the sorting time in the front end
@@ -55,6 +60,9 @@ signals:
    * \param sortingText QString of sorting text to show
    */
   void displaySortingTime(QString sortingText);
+
+private:
+  QString mSourceImagePath;
 };
 
 #endif // FRONTEND_H

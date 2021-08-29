@@ -6,10 +6,12 @@ import "Theme.js" as Theme
 import QMLLiveImage.Images 1.0
 
 Window {
+    id: mainWindow
     visible: true
     width: Theme.defaultWidth
     height: Theme.defaultWidth
     title: qsTr("Hello World")
+    property var selectedSort: ""
 
     Connections {
         target: frontEndObject
@@ -35,14 +37,21 @@ Window {
         border.width: Theme.borderWidth
         Text {
             anchors.centerIn: parent
-            text: "No source image selected"
+            text: "No source image selected.\nDrag and drop a new image in."
         }
-        Image {
-            id: rgbSourceImage
+        LiveImage {
+            id: rgbLoadedImage
             anchors.margins: Theme.imageMargins
             anchors.fill: parent
-            source: "example-image.jpg"
-            fillMode: Image.PreserveAspectFit
+            image: LoadedImageProvider.image
+        }
+
+        DropArea {
+            id: loadImageDropAread
+            anchors.fill: parent
+            onDropped: {
+                frontEndObject.loadImage(drop.text)
+            }
         }
     }
 
@@ -65,7 +74,7 @@ Window {
             id: rgbSortedImage
             anchors.margins: Theme.imageMargins
             anchors.fill: parent
-            image: LiveImageProvider.image
+            image: SortedImageProvider.image
         }
     }
 
@@ -101,7 +110,7 @@ Window {
             }
 
             onClicked: {
-                frontEndObject.processImage()
+                submitProcessImage()
             }
         }
 
@@ -113,8 +122,10 @@ Window {
             anchors.topMargin: Theme.buttonMargins
             text: "Bubble sort"
             onClicked: {
-                if (isChecked)
+                if (isChecked) {
                     radioButtonEnabling("bubble")
+                    mainWindow.selectedSort = "bubble"
+                }
             }
         }
         CustomRadioButton {
@@ -124,8 +135,10 @@ Window {
             anchors.topMargin: Theme.buttonMargins
             text: "Selection sort"
             onClicked: {
-                if (isChecked)
+                if (isChecked) {
                     radioButtonEnabling("selection")
+                    mainWindow.selectedSort = "selection"
+                }
             }
         }
 
@@ -136,6 +149,7 @@ Window {
             anchors.bottom: parent.bottom
             anchors.margins: Theme.imageMargins
             text: "Sorting time: 0ms"
+            wrapMode: Text.Wrap
         }
     }
 
@@ -188,5 +202,18 @@ Window {
         if (sortType !== "selection") {
             selectionSortButton.isChecked = false
         }
+    }
+    function submitProcessImage() {
+        // There are some arugment checks to perform and pass to the frontend.cpp slot
+        // This function runs through that and forms the correct argument set
+
+        // Check the user has selected a sort
+        if (selectedSort === "") {
+            errorText.text = "No sort selected, please select one."
+            errorPopup.open()
+            return
+        }
+
+        frontEndObject.processImage(selectedSort)
     }
 }

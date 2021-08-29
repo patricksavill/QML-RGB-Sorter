@@ -15,7 +15,7 @@ var imageMargins = 20
 // UI Sizing
 var defaultWidth = 1080
 var defaultHeight = 720
-var menuWidth = 180
+var menuWidth = 220
 var buttonHeight = 40
 var buttonWidth = 120
 var popupHeight = 180

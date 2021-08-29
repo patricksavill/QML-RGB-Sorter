@@ -1,16 +1,10 @@
 #include "ImageProvider.h"
 
-ImageProvider::ImageProvider(QObject *parent)
-    : QObject(parent)
-{}
+ImageProvider::ImageProvider(QObject *parent) : QObject(parent) {}
 
-void ImageProvider::setImage(QImage const &image)
-{
-    m_image = image;
-    emit imageChanged();
+void ImageProvider::SetImage(QImage const &image) {
+  mImage = image;
+  emit imageChanged();
 }
 
-QImage ImageProvider::image() const
-{
-    return m_image;
-}
+QImage ImageProvider::ProvideImage() const { return mImage; }

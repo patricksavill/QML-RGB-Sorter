@@ -3,7 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 
 import "Theme.js" as Theme
-import MyApp.Images 1.0
+import QMLLiveImage.Images 1.0
 
 Window {
     visible: true
@@ -17,6 +17,9 @@ Window {
         onDisplayErrorPopup: {
             errorText.text = errorMsg
             errorPopup.open()
+        }
+        onDisplaySortingTime: {
+            sortingDurationText.text = sortingText
         }
     }
 
@@ -39,6 +42,7 @@ Window {
             anchors.margins: Theme.imageMargins
             anchors.fill: parent
             source: "example-image.jpg"
+            fillMode: Image.PreserveAspectFit
         }
     }
 
@@ -94,6 +98,15 @@ Window {
                 frontEndObject.processImage()
             }
         }
+
+        Text {
+            id: sortingDurationText
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.margins: Theme.imageMargins
+            text: "Sorting time: 0ms"
+        }
     }
 
     Popup {
@@ -113,7 +126,9 @@ Window {
         Text {
             id: errorText
             anchors.centerIn: parent
+            width: parent.width
             text: ""
+            wrapMode: Text.Wrap
         }
         Button {
             anchors.right: parent.right

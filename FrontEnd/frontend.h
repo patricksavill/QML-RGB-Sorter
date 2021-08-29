@@ -37,12 +37,24 @@ public slots:
    */
   void updateImage(QImage newImage);
 
+  /*!
+   * \brief updateSortTime Slot to update the sorting time in the front end
+   * \param sortingTime Double, duration to display
+   */
+  void updateSortTime(double sortingTime);
+
 signals:
   /*!
    * \brief displayErrorPopup Signal to show error on the front end
    * \param errorMsg QString of error message to display
    */
   void displayErrorPopup(QString errorMsg);
+
+  /*!
+   * \brief displaySortingTime Signal to show the sorting time
+   * \param sortingText QString of sorting text to show
+   */
+  void displaySortingTime(QString sortingText);
 };
 
 #endif // FRONTEND_H

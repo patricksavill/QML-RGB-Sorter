@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>Theme.js</file>
         <file>example-image.jpg</file>
+        <file>CustomRadioButton.qml</file>
     </qresource>
 </RCC>

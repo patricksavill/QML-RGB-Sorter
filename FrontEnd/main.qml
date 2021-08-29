@@ -81,6 +81,7 @@ Window {
         border.width: Theme.borderWidth
 
         Button {
+            id: processImageButton
             anchors.top: parent.top
             anchors.topMargin: Theme.buttonHeight
             anchors.horizontalCenter: parent.horizontalCenter
@@ -93,9 +94,38 @@ Window {
                 border.color: "black"
                 border.width: Theme.borderWidth
             }
-            text: "Process Image"
+            Text {
+                anchors.centerIn: parent
+                wrapMode: Text.Wrap
+                text: "Process Image"
+            }
+
             onClicked: {
                 frontEndObject.processImage()
+            }
+        }
+
+        // Sort selection radio buttons
+        CustomRadioButton {
+            id: bubbleSortButton
+            anchors.left: processImageButton.left
+            anchors.top: processImageButton.bottom
+            anchors.topMargin: Theme.buttonMargins
+            text: "Bubble sort"
+            onClicked: {
+                if (isChecked)
+                    radioButtonEnabling("bubble")
+            }
+        }
+        CustomRadioButton {
+            id: selectionSortButton
+            anchors.left: processImageButton.left
+            anchors.top: bubbleSortButton.bottom
+            anchors.topMargin: Theme.buttonMargins
+            text: "Selection sort"
+            onClicked: {
+                if (isChecked)
+                    radioButtonEnabling("selection")
             }
         }
 
@@ -147,5 +177,16 @@ Window {
             }
         }
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    }
+
+    function radioButtonEnabling(sortType) {
+        // As we have multiple sorts, only one can be active at a time
+        // This function ensures that each time a button is clicked
+        if (sortType !== "bubble") {
+            bubbleSortButton.isChecked = false
+        }
+        if (sortType !== "selection") {
+            selectionSortButton.isChecked = false
+        }
     }
 }

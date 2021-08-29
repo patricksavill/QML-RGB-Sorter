@@ -9,17 +9,30 @@
 
 class ImageProvider : public QObject {
   Q_OBJECT
-  Q_PROPERTY(
-      QImage image MEMBER m_image READ image WRITE setImage NOTIFY imageChanged)
+  Q_PROPERTY(QImage image MEMBER mImage READ ProvideImage WRITE SetImage NOTIFY
+                 imageChanged)
 
-  QImage m_image;
+  QImage mImage;
 
 public:
   explicit ImageProvider(QObject *parent = nullptr);
-  void setImage(QImage const &image);
-  QImage image() const;
+
+  /*!
+   * \brief SetImage function to update the QImage held by the class
+   * \param image const address to the QImage to use
+   */
+  void SetImage(QImage const &image);
+
+  /*!
+   * \brief ProvideImage functino to return the QImage held, when read from
+   * \return QImage
+   */
+  QImage ProvideImage() const;
 
 signals:
+  /*!
+   * \brief imageChanged Signal to send out once the held QImage is updated
+   */
   void imageChanged();
 };
 

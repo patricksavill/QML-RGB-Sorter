@@ -11,6 +11,10 @@ class ImageProcessing : public QObject {
 public:
   ImageProcessing();
 
+  /*!
+   * \brief The SortAlgorithm enum is used by the front end to pass which
+   * algorithm a user has selected to use
+   */
   enum SortAlgorithm { BUBBLE_SORT, SELECTION_SORT };
 
   /*!
@@ -79,13 +83,20 @@ private:
 
   /*!
    * \brief IntensityCompare Comparison function to compare intensity of
-   * all channels combined
+   * all channels combined evenly
    * \param a QColor to compare against b
    * \param b QColor to be compared against
    * \return True if a > b
    */
   static bool IntensityCompare(QColor a, QColor b);
 
+  /*!
+   * \brief IntensityCompare Overloaded comparison function to compare intensity
+   * of all channels combined evenly
+   * \param a QRgb to compare against b
+   * \param b QRgb to be compared against
+   * \return True if a > b
+   * */
   static bool IntensityCompare(QRgb a, QRgb b);
 };
 

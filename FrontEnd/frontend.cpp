@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   // ImageProvider is a class that we use to write new QImages too. In turn this
   // stored image is shown by the LiveImage object in QML allowing for live
   // updates of images and circumventing the need to use QUrls
-  qmlRegisterType<LiveImage>("MyApp.Images", 1, 0, "LiveImage");
+  qmlRegisterType<LiveImage>("QMLLiveImage.Images", 1, 0, "LiveImage");
   engine.rootContext()->setContextProperty("LiveImageProvider",
                                            &FrontEndObject->mProvider);
   engine.rootContext()->setContextProperty("frontEndObject", FrontEndObject);
@@ -68,7 +68,7 @@ void FrontEnd::processImage() {
 
 void FrontEnd::updateImage(QImage newImage) {
 
-  this->mProvider.setImage(newImage);
+  this->mProvider.SetImage(newImage);
 }
 
 void FrontEnd::updateSortTime(double sortingTime) {

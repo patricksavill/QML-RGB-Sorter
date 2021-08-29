@@ -3,7 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 
 import "Theme.js" as Theme
-import MyApp.Images 1.0
+import QMLLiveImage.Images 1.0
 
 Window {
     visible: true
@@ -99,10 +99,10 @@ Window {
             }
         }
 
-        Text{
+        Text {
             id: sortingDurationText
-            anchors.right:parent.right
-            anchors.left:parent.left
+            anchors.right: parent.right
+            anchors.left: parent.left
             anchors.bottom: parent.bottom
             anchors.margins: Theme.imageMargins
             text: "Sorting time: 0ms"

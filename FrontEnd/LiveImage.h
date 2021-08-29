@@ -10,14 +10,24 @@
 
 class LiveImage : public QQuickPaintedItem {
   Q_OBJECT
-  Q_PROPERTY(QImage image MEMBER m_image WRITE setImage)
+  Q_PROPERTY(QImage image MEMBER mImage WRITE SetImage)
 
   // Just storage for the image
-  QImage m_image;
+  QImage mImage;
 
 public:
   explicit LiveImage(QQuickItem *parent = nullptr);
-  void setImage(const QImage &image);
+
+  /*!
+   * \brief setImage function to set the image in memory
+   * \param image const QImage address
+   */
+  void SetImage(const QImage &image);
+
+  /*!
+   * \brief paint function to overwrite the paint call in QML
+   * \param painter QPainter pointer to use and update
+   */
   void paint(QPainter *painter) override;
 };
 

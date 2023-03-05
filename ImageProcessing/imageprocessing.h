@@ -22,9 +22,10 @@ public:
    * \param inputImagePath Path to the image to sort
    * \param sortingAlg Integer corresponding to Enum of algorithms
    * Use as the switch to launch the sort as chosen by a user
+   * \param dualAxisSort boolean flag to sort along x and y if true
    * \return QImage with sorted pixels
    */
-  QImage SortImage(QString inputImagePath, int sortingAlg);
+  QImage SortImage(QString inputImagePath, int sortingAlg, bool dualAxisSort);
 
 signals:
   /*!
@@ -44,10 +45,11 @@ private:
    * \brief BubbleSort Parent function to call bubble sort
    * \param unsortedImage Pointer to the unsorted QImage to sort
    * \param *metric Function pointer to the metric used for sorting
+   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
    * \return QImage, sorted
    */
   QImage BubbleSort(std::shared_ptr<QImage> unsortedImage,
-                    bool (*metric)(QColor, QColor));
+                    bool (*metric)(QColor, QColor), bool dualAxisSort);
 
   /*!
    * \brief BubbleSortThread thread to perform bubble sort with
@@ -64,10 +66,12 @@ private:
   /*!
    * \brief SelectionSort Parent function to call the Selection sort threads
    * \param unsortedImage Pointer to the unsorted QImage to sort
-   * \return
+   * \param *metric Function pointer to the metric used for sorting
+   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
+   * \return None, sort is done in place on the shared pointer
    */
   QImage SelectionSort(std::shared_ptr<QImage> unsortedImage,
-                       bool (*metric)(QRgb, QRgb));
+                       bool (*metric)(QRgb, QRgb), bool dualAxisSort);
 
   /*!
    * \brief SelectionSortThread thread to perform Selection sort with
@@ -98,6 +102,8 @@ private:
    * \return True if a > b
    * */
   static bool IntensityCompare(QRgb a, QRgb b);
+
+  // TODO HSV compare too
 };
 
 #endif // IMAGEPROCESSING_H

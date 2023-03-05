@@ -125,6 +125,8 @@ Window {
                 if (isChecked) {
                     radioButtonEnabling("bubble")
                     mainWindow.selectedSort = "bubble"
+                } else {
+                    mainWindow.selectedSort = ""
                 }
             }
         }
@@ -138,8 +140,29 @@ Window {
                 if (isChecked) {
                     radioButtonEnabling("selection")
                     mainWindow.selectedSort = "selection"
+                } else {
+                    mainWindow.selectedSort = ""
                 }
             }
+        }
+
+        Rectangle {
+            id: horizontalDivider
+            width: Theme.menuWidth - Theme.buttonMargins * 2
+            height: Theme.dividerHeight
+            color: "black"
+            anchors.top: selectionSortButton.bottom
+            anchors.topMargin: Theme.buttonMargins
+            anchors.left: menuBox.left
+            anchors.leftMargin: Theme.buttonMargins
+        }
+
+        CustomRadioButton {
+            id: dualAxisSort
+            anchors.left: processImageButton.left
+            anchors.top: horizontalDivider.bottom
+            anchors.topMargin: Theme.buttonMargins
+            text: "Sort x and y"
         }
 
         Text {
@@ -214,6 +237,6 @@ Window {
             return
         }
 
-        frontEndObject.processImage(selectedSort)
+        frontEndObject.processImage(selectedSort, dualAxisSort.isChecked)
     }
 }

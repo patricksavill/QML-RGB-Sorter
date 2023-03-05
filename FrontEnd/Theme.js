@@ -11,6 +11,7 @@ var popupBackground = "#C2C2C2"
 var borderWidth = 2
 var radius = 4
 var imageMargins = 20
+var dividerHeight = 3
 
 // UI Sizing
 var defaultWidth = 1080

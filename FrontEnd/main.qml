@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 
 import "Theme.js" as Theme
 import QMLLiveImage.Images 1.0
+import ImageSort 1.0
 
 Window {
     id: mainWindow
@@ -11,7 +12,7 @@ Window {
     width: Theme.defaultWidth
     height: Theme.defaultWidth
     title: qsTr("Hello World")
-    property var selectedSort: ""
+    property var selectedSort: ImageSortEnum.NONE
 
     Connections {
         target: frontEndObject
@@ -123,10 +124,10 @@ Window {
             text: "Bubble sort"
             onClicked: {
                 if (isChecked) {
-                    radioButtonEnabling("bubble")
-                    mainWindow.selectedSort = "bubble"
+                    mainWindow.selectedSort = ImageSortEnum.BUBBLE_SORT
+                    radioButtonEnabling()
                 } else {
-                    mainWindow.selectedSort = ""
+                    mainWindow.selectedSort = ImageSortEnum.NONE
                 }
             }
         }
@@ -138,10 +139,10 @@ Window {
             text: "Selection sort"
             onClicked: {
                 if (isChecked) {
-                    radioButtonEnabling("selection")
-                    mainWindow.selectedSort = "selection"
+                    mainWindow.selectedSort = ImageSortEnum.SELECTION_SORT
+                    radioButtonEnabling()
                 } else {
-                    mainWindow.selectedSort = ""
+                    mainWindow.selectedSort = ImageSortEnum.NONE
                 }
             }
         }
@@ -216,13 +217,13 @@ Window {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     }
 
-    function radioButtonEnabling(sortType) {
+    function radioButtonEnabling() {
         // As we have multiple sorts, only one can be active at a time
         // This function ensures that each time a button is clicked
-        if (sortType !== "bubble") {
+        if (selectedSort !== ImageSortEnum.BUBBLE_SORT) {
             bubbleSortButton.isChecked = false
         }
-        if (sortType !== "selection") {
+        if (selectedSort !== ImageSortEnum.SELECTION_SORT) {
             selectionSortButton.isChecked = false
         }
     }
@@ -231,7 +232,7 @@ Window {
         // This function runs through that and forms the correct argument set
 
         // Check the user has selected a sort
-        if (selectedSort === "") {
+        if (selectedSort === ImageSortEnum.NONE) {
             errorText.text = "No sort selected, please select one."
             errorPopup.open()
             return

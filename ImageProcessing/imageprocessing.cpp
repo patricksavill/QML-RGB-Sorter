@@ -27,9 +27,9 @@ QImage ImageProcessing::SortImage(QString inputImagePath, int sortingAlg,
 
   QImage sorted_image;
   auto start = std::chrono::high_resolution_clock::now();
-  if (sortingAlg == BUBBLE_SORT) {
+  if (sortingAlg == ImageSortEnum::BUBBLE_SORT) {
     sorted_image = BubbleSort(input_image, &IntensityCompare, dualAxisSort);
-  } else if (sortingAlg == SELECTION_SORT) {
+  } else if (sortingAlg == ImageSortEnum::SELECTION_SORT) {
     sorted_image = SelectionSort(input_image, &IntensityCompare, dualAxisSort);
   } else {
     emit displayError("Invalid sorting algorithm chosen");

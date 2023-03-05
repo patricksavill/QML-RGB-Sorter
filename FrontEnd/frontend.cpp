@@ -26,15 +26,21 @@ int main(int argc, char *argv[]) {
       },
       Qt::QueuedConnection);
 
-  // This is some interesting implementation to force an image update
-  // LiveImage is a class that QML can instantiate to draw and image
-  // ImageProvider is a class that we use to write new QImages too. In turn this
-  // stored image is shown by the LiveImage object in QML allowing for live
-  // updates of images and circumventing the need to use QUrls
+  /*
+   * This is some interesting implementation to force an image update
+   * LiveImage is a class that QML can instantiate to draw and image
+   * ImageProvider is a class that we use to write new QImages too. In turn this
+   * stored image is shown by the LiveImage object in QML allowing for live
+   * updates of images and circumventing the need to use QUrls
+   */
+
+  qmlRegisterType<LiveImage>("QMLLiveImage.Images", 1, 0, "LiveImage");
+
+  // Here we register the enums for use in the front end connection to back end
+  qmlRegisterType<ImageSortEnum>("ImageSort", 1, 0, "ImageSortEnum");
 
   // We use LoadedImageProvider for the initial image, and SortedImageProvider
   // for the sorted image
-  qmlRegisterType<LiveImage>("QMLLiveImage.Images", 1, 0, "LiveImage");
   engine.rootContext()->setContextProperty("LoadedImageProvider",
                                            &FrontEndObject->mLoadedProvider);
   engine.rootContext()->setContextProperty("SortedImageProvider",
@@ -69,7 +75,7 @@ void FrontEnd::loadImage(QString filePath) {
   updateImage(new_image, &this->mLoadedProvider);
 }
 
-void FrontEnd::processImage(QString sortType, bool dualAxisSort) {
+void FrontEnd::processImage(int sortType, bool dualAxisSort) {
 
   if (mSourceImagePath.isNull()) {
     emit displayErrorPopup("No image loaded, cannot sort");
@@ -83,19 +89,17 @@ void FrontEnd::processImage(QString sortType, bool dualAxisSort) {
           &FrontEnd::updateSortTime);
 
   QImage sorted_image;
-  int sorting_algorithm = -1;
-  if (sortType == "bubble") {
-    sorting_algorithm = ImageProcessing::BUBBLE_SORT;
 
-  } else if (sortType == "selection") {
-    sorting_algorithm = ImageProcessing::SELECTION_SORT;
+  // Safety check the passed sorting alg is implemented
+  if (sortType == ImageSortEnum::BUBBLE_SORT ||
+      sortType == ImageSortEnum::SELECTION_SORT) {
+    sorted_image =
+        image_processor->SortImage(mSourceImagePath, sortType, dualAxisSort);
   } else {
     emit displayErrorPopup(
         QString("Unknown sort type selected: %0").arg(sortType));
+    return;
   }
-
-  sorted_image = image_processor->SortImage(mSourceImagePath, sorting_algorithm,
-                                            dualAxisSort);
 
   if (sorted_image.isNull()) {
     return;

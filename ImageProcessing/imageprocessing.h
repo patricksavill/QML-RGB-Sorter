@@ -5,17 +5,13 @@
 #include <QString>
 #include <future>
 
+#include "imageenums.h"
+
 // We use a QObject class to allow for signal and slot connections
 class ImageProcessing : public QObject {
   Q_OBJECT
 public:
   ImageProcessing();
-
-  /*!
-   * \brief The SortAlgorithm enum is used by the front end to pass which
-   * algorithm a user has selected to use
-   */
-  enum SortAlgorithm { BUBBLE_SORT, SELECTION_SORT };
 
   /*!
    * \brief SortImage Basic function to sort an image's pixels

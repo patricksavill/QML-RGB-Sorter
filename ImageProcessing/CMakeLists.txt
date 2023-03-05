@@ -15,6 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Core Gui REQUIRED)
 
 add_library(ImageProcessing STATIC
+    imageenums.h
     imageprocessing.cpp
     imageprocessing.h
 )

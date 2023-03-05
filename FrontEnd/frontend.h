@@ -30,11 +30,11 @@ public slots:
   /*!
    * \brief processImage parent slot that should take in the image and sorting
    * metric then pass this onto the back end
-   * \param sortType QString sorting algorithm chosen, passed in from QML
+   * \param sortType enum, sorting algorithm chosen passed in from QML
    * \param dualAxisSort boolean, flag if the image will be sorted twice (x and
    * y) or just along x
    */
-  void processImage(QString sortType, bool dualAxisSort);
+  void processImage(int sortType, bool dualAxisSort);
 
   /*!
    * \brief updateImage Slot to push a new QImage to and refresh the UI with

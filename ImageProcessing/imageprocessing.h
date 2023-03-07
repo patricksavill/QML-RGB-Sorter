@@ -60,6 +60,28 @@ private:
                                bool (*metric)(QColor, QColor));
 
   /*!
+   * \brief InsertionSort Parent function to call the Insertion sort threads
+   * \param unsortedImage Pointer to the unsorted QImage to sort
+   * \param *metric Function pointer to the metric used for sorting
+   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
+   * \return None, sort is done in place on the shared pointer
+   */
+  QImage InsertionSort(std::shared_ptr<QImage> unsortedImage,
+                       bool (*metric)(QRgb, QRgb), bool dualAxisSort);
+
+  /*!
+   * \brief InsertionSortThread thread to perform Insertion sort with
+   * \param unsortedImage Shared pointer to unsorted image
+   * \param y_start Vertical index to start on
+   * \param y_end Vertical index to end on
+   * \param *metric Function pointer to the metric used for sorting
+   * \return None, sort is done in place on the shared pointer
+   */
+  static void InsertionSortThread(std::shared_ptr<QImage> unsortedImage,
+                                  int y_start, int y_end,
+                                  bool (*metric)(QRgb, QRgb));
+
+  /*!
    * \brief SelectionSort Parent function to call the Selection sort threads
    * \param unsortedImage Pointer to the unsorted QImage to sort
    * \param *metric Function pointer to the metric used for sorting

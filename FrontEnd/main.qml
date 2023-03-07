@@ -132,9 +132,24 @@ Window {
             }
         }
         CustomRadioButton {
-            id: selectionSortButton
+            id: insertionSortButton
             anchors.left: processImageButton.left
             anchors.top: bubbleSortButton.bottom
+            anchors.topMargin: Theme.buttonMargins
+            text: "Insertion sort"
+            onClicked: {
+                if (isChecked) {
+                    mainWindow.selectedSort = ImageSortEnum.INSERTION_SORT
+                    radioButtonEnabling()
+                } else {
+                    mainWindow.selectedSort = ImageSortEnum.NONE
+                }
+            }
+        }
+        CustomRadioButton {
+            id: selectionSortButton
+            anchors.left: processImageButton.left
+            anchors.top: insertionSortButton.bottom
             anchors.topMargin: Theme.buttonMargins
             text: "Selection sort"
             onClicked: {
@@ -222,6 +237,9 @@ Window {
         // This function ensures that each time a button is clicked
         if (selectedSort !== ImageSortEnum.BUBBLE_SORT) {
             bubbleSortButton.isChecked = false
+        }
+        if (selectedSort !== ImageSortEnum.INSERTION_SORT) {
+            insertionSortButton.isChecked = false
         }
         if (selectedSort !== ImageSortEnum.SELECTION_SORT) {
             selectionSortButton.isChecked = false

@@ -92,6 +92,7 @@ void FrontEnd::processImage(int sortType, bool dualAxisSort) {
 
   // Safety check the passed sorting alg is implemented
   if (sortType == ImageSortEnum::BUBBLE_SORT ||
+      sortType == ImageSortEnum::INSERTION_SORT ||
       sortType == ImageSortEnum::SELECTION_SORT) {
     sorted_image =
         image_processor->SortImage(mSourceImagePath, sortType, dualAxisSort);

@@ -20,7 +20,7 @@ public:
    * \brief The SortAlgorithm enum is used by the front end to pass which
    * algorithm a user has selected to use
    */
-  enum SortAlgorithm { NONE = 0, BUBBLE_SORT, SELECTION_SORT };
+  enum SortAlgorithm { NONE = 0, BUBBLE_SORT, INSERTION_SORT, SELECTION_SORT };
   Q_ENUM(SortAlgorithm) // Declared so QML can use the enums
 };
 

@@ -18,10 +18,12 @@ public:
    * \param inputImagePath Path to the image to sort
    * \param sortingAlg Integer corresponding to Enum of algorithms
    * Use as the switch to launch the sort as chosen by a user
+   * \param metricType Integer corresponding to Enum of pixel metric
    * \param dualAxisSort boolean flag to sort along x and y if true
    * \return QImage with sorted pixels
    */
-  QImage SortImage(QString inputImagePath, int sortingAlg, bool dualAxisSort);
+  QImage SortImage(QString inputImagePath, int sortingAlg, int metricType,
+                   bool dualAxisSort);
 
 signals:
   /*!
@@ -121,7 +123,9 @@ private:
    * */
   static bool IntensityCompare(QRgb a, QRgb b);
 
-  // TODO HSV compare too
+  static bool HueCompare(QColor a, QColor b);
+
+  static bool HueCompare(QRgb a, QRgb b);
 };
 
 #endif // IMAGEPROCESSING_H

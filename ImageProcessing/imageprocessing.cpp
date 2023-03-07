@@ -9,7 +9,7 @@
 ImageProcessing::ImageProcessing() {}
 
 QImage ImageProcessing::SortImage(QString inputImagePath, int sortingAlg,
-                                  bool dualAxisSort) {
+                                  int metricType, bool dualAxisSort) {
 
   QFile input_path(inputImagePath);
   if (!input_path.exists()) {
@@ -27,6 +27,12 @@ QImage ImageProcessing::SortImage(QString inputImagePath, int sortingAlg,
 
   // Determine pixel metric function to use
   bool (*pixel_metric)(QRgb, QRgb);
+  if (metricType == ImageSortEnum::PixelMetric::RGB_INTENSITY) {
+    pixel_metric = &IntensityCompare;
+  } else if (metricType == ImageSortEnum::PixelMetric::HUE) {
+    pixel_metric = &HueCompare;
+  }
+
   QImage sorted_image;
   auto start = std::chrono::high_resolution_clock::now();
   if (sortingAlg == ImageSortEnum::BUBBLE_SORT) {
@@ -294,4 +300,13 @@ bool ImageProcessing::IntensityCompare(QColor a, QColor b) {
 
 bool ImageProcessing::IntensityCompare(QRgb a, QRgb b) {
   return ((qRed(a) + qGreen(a) + qBlue(a)) > (qRed(b) + qGreen(b) + qBlue(b)));
+}
+
+bool ImageProcessing::HueCompare(QColor a, QColor b) {
+  return a.hsvHue() > b.hsvHue();
+}
+
+bool ImageProcessing::HueCompare(QRgb a, QRgb b) {
+  // Potentially very costly
+  return QColor::fromRgb(a).hsvHue() > QColor::fromRgb(b).hsvHue();
 }

@@ -13,6 +13,7 @@ Window {
     height: Theme.defaultWidth
     title: qsTr("Hello World")
     property var selectedSort: ImageSortEnum.NONE
+    property var selectedMetric: ImageSortEnum.RGB_INTENSITY
 
     Connections {
         target: frontEndObject
@@ -181,6 +182,54 @@ Window {
             text: "Sort x and y"
         }
 
+        // combo box for metric selection
+        ComboBox {
+            id: metricComboBox
+            anchors.top: dualAxisSort.bottom
+            anchors.topMargin: Theme.buttonMargins
+            width: Theme.buttonWidth
+            height: Theme.buttonHeight
+            anchors.left: dualAxisSort.left
+            hoverEnabled: true
+
+            currentIndex: 0
+            background: Rectangle {
+                anchors.fill: parent
+                color: metricComboBox.down ? Theme.buttonPressed : metricComboBox.hovered ? Theme.buttonHovered : "transparent"
+                border.color: "black"
+                border.width: Theme.borderWidth
+            }
+
+            // This contains the elements of the combo box
+            model: ListModel {
+                id: pixelMetricModel
+                ListElement {
+                    metric_text: "RGB Intensity"
+                    //                    metric_enum: ImageSortEnum.RGB_INTENSITY
+                }
+                ListElement {
+                    metric_text: "HSV Hue"
+                    //                    metric_enum: ImageSortEnum.HUE
+                }
+            }
+
+            // This controls how elements are shown
+            delegate: ItemDelegate {
+                width: parent.width
+                contentItem: Text {
+                    text: metric_text
+                }
+            }
+
+            onCurrentIndexChanged: {
+                if (currentIndex == 0) {
+                    selectedMetric = ImageSortEnum.RGB_INTENSITY
+                } else if (currentIndex == 1) {
+                    selectedMetric = ImageSortEnum.HUE
+                }
+            }
+        }
+
         Text {
             id: sortingDurationText
             anchors.right: parent.right
@@ -256,6 +305,7 @@ Window {
             return
         }
 
-        frontEndObject.processImage(selectedSort, dualAxisSort.isChecked)
+        frontEndObject.processImage(selectedSort, selectedMetric,
+                                    dualAxisSort.isChecked)
     }
 }

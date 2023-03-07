@@ -75,7 +75,7 @@ void FrontEnd::loadImage(QString filePath) {
   updateImage(new_image, &this->mLoadedProvider);
 }
 
-void FrontEnd::processImage(int sortType, bool dualAxisSort) {
+void FrontEnd::processImage(int sortType, int metricType, bool dualAxisSort) {
 
   if (mSourceImagePath.isNull()) {
     emit displayErrorPopup("No image loaded, cannot sort");
@@ -94,8 +94,8 @@ void FrontEnd::processImage(int sortType, bool dualAxisSort) {
   if (sortType == ImageSortEnum::BUBBLE_SORT ||
       sortType == ImageSortEnum::INSERTION_SORT ||
       sortType == ImageSortEnum::SELECTION_SORT) {
-    sorted_image =
-        image_processor->SortImage(mSourceImagePath, sortType, dualAxisSort);
+    sorted_image = image_processor->SortImage(mSourceImagePath, sortType,
+                                              metricType, dualAxisSort);
   } else {
     emit displayErrorPopup(
         QString("Unknown sort type selected: %0").arg(sortType));

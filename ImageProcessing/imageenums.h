@@ -22,6 +22,13 @@ public:
    */
   enum SortAlgorithm { NONE = 0, BUBBLE_SORT, INSERTION_SORT, SELECTION_SORT };
   Q_ENUM(SortAlgorithm) // Declared so QML can use the enums
+
+  /*!
+   * \brief The PixelMetric enum used by front end for the user to choose the
+   * metric that the back end should use for pixel comparisons
+   */
+  enum PixelMetric { RGB_INTENSITY, HUE };
+  Q_ENUM(PixelMetric)
 };
 
 #endif

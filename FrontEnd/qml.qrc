@@ -4,5 +4,6 @@
         <file>Theme.js</file>
         <file>example-image.jpg</file>
         <file>CustomRadioButton.qml</file>
+        <file>icons/arrow-resize.svg</file>
     </qresource>
 </RCC>

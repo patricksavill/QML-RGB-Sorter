@@ -27,13 +27,45 @@ Window {
         }
     }
 
+    Rectangle {
+        id: dynamicVerticalBox
+        width: Theme.paneSliderWidth
+        height: Theme.paneSliderHeight
+        y: mainWindow.height / 2
+        x: (parent.width - menuBox.width) / 2
+        color: "transparent"
+        border.color: "transparent"
+        Image {
+            id: img
+            anchors.centerIn: parent
+            source: "qrc:/icons/arrow-resize.svg"
+            width: 30
+            height: 30
+            fillMode: Image.PreserveAspectFit
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            drag {
+                target: dynamicVerticalBox
+                axis: Drag.YAxis
+                minimumY: 0
+                maximumY: mainWindow.height
+            }
+            onDoubleClicked: {
+                parent.y = mainWindow.height / 2
+            }
+        }
+    }
+
     // Image viewer 1
     Rectangle {
         id: imageBox1
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: menuBox.left
-        height: parent.height / 2
+        anchors.bottom: dynamicVerticalBox.top
+        anchors.bottomMargin: -dynamicVerticalBox.height / 2
         color: "transparent"
         border.color: "black"
         border.width: Theme.borderWidth
@@ -63,7 +95,8 @@ Window {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: menuBox.left
-        height: parent.height / 2
+        anchors.top: dynamicVerticalBox.bottom
+        anchors.topMargin: -dynamicVerticalBox.height / 2
         color: "transparent"
         border.color: "black"
         border.width: Theme.borderWidth

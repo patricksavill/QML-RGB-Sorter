@@ -23,3 +23,5 @@ var popupHeight = 180
 var popupWidth = 280
 var radioButtonHeight = 20
 var buttonMargins = 10
+var paneSliderWidth = 40
+var paneSliderHeight = 20

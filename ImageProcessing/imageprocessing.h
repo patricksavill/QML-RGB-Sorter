@@ -40,16 +40,6 @@ signals:
 
 private:
   /*!
-   * \brief BubbleSort Parent function to call bubble sort
-   * \param unsortedImage Pointer to the unsorted QImage to sort
-   * \param *metric Function pointer to the metric used for sorting
-   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
-   * \return QImage, sorted
-   */
-  QImage BubbleSort(std::shared_ptr<QImage> unsortedImage,
-                    bool (*metric)(QColor, QColor), bool dualAxisSort);
-
-  /*!
    * \brief BubbleSortThread thread to perform bubble sort with
    * \param unsortedImage Shared pointer to unsorted image
    * \param y_start Vertical index to start on
@@ -59,17 +49,7 @@ private:
    */
   static void BubbleSortThread(std::shared_ptr<QImage> unsortedImage,
                                int y_start, int y_end,
-                               bool (*metric)(QColor, QColor));
-
-  /*!
-   * \brief InsertionSort Parent function to call the Insertion sort threads
-   * \param unsortedImage Pointer to the unsorted QImage to sort
-   * \param *metric Function pointer to the metric used for sorting
-   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
-   * \return None, sort is done in place on the shared pointer
-   */
-  QImage InsertionSort(std::shared_ptr<QImage> unsortedImage,
-                       bool (*metric)(QRgb, QRgb), bool dualAxisSort);
+                               bool (*metric)(QRgb, QRgb));
 
   /*!
    * \brief InsertionSortThread thread to perform Insertion sort with
@@ -84,16 +64,6 @@ private:
                                   bool (*metric)(QRgb, QRgb));
 
   /*!
-   * \brief SelectionSort Parent function to call the Selection sort threads
-   * \param unsortedImage Pointer to the unsorted QImage to sort
-   * \param *metric Function pointer to the metric used for sorting
-   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
-   * \return None, sort is done in place on the shared pointer
-   */
-  QImage SelectionSort(std::shared_ptr<QImage> unsortedImage,
-                       bool (*metric)(QRgb, QRgb), bool dualAxisSort);
-
-  /*!
    * \brief SelectionSortThread thread to perform Selection sort with
    * \param unsortedImage Shared pointer to unsorted image
    * \param y_start Vertical index to start on
@@ -106,16 +76,7 @@ private:
                                   bool (*metric)(QRgb, QRgb));
 
   /*!
-   * \brief IntensityCompare Comparison function to compare intensity of
-   * all channels combined evenly
-   * \param a QColor to compare against b
-   * \param b QColor to be compared against
-   * \return True if a > b
-   */
-  static bool IntensityCompare(QColor a, QColor b);
-
-  /*!
-   * \brief IntensityCompare Overloaded comparison function to compare intensity
+   * \brief IntensityCompare Comparison function to compare intensity
    * of all channels combined evenly
    * \param a QRgb to compare against b
    * \param b QRgb to be compared against
@@ -123,8 +84,12 @@ private:
    * */
   static bool IntensityCompare(QRgb a, QRgb b);
 
-  static bool HueCompare(QColor a, QColor b);
-
+  /*!
+   * \brief HueCompare Comparison function of the Hue in HSV
+   * \param a QRgb to compare against b
+   * \param b QRgb to be compared against
+   * \return True if a > b
+   */
   static bool HueCompare(QRgb a, QRgb b);
 };
 

@@ -3,7 +3,6 @@
 #include <QImageReader>
 #include <QImageWriter>
 #include <chrono>
-#include <iostream>
 #include <thread>
 
 ImageProcessing::ImageProcessing() {}
@@ -11,21 +10,23 @@ ImageProcessing::ImageProcessing() {}
 QImage ImageProcessing::SortImage(QString inputImagePath, int sortingAlg,
                                   int metricType, bool dualAxisSort) {
 
+  // Determine if the file exists on disk/is accessible
   QFile input_path(inputImagePath);
   if (!input_path.exists()) {
     emit displayError(
         QString("The input image doesn't exist: %0").arg(inputImagePath));
     return QImage();
   }
-  QImageReader reader(inputImagePath);
 
+  // Read in the image
+  QImageReader reader(inputImagePath);
   std::shared_ptr<QImage> input_image = std::make_shared<QImage>(reader.read());
   if (input_image == nullptr) {
     emit displayError("Couldn't read in image");
     return QImage();
   }
 
-  // Determine pixel metric function to use
+  // Determine pixel metric function to use in threads
   bool (*pixel_metric)(QRgb, QRgb);
   if (metricType == ImageSortEnum::PixelMetric::RGB_INTENSITY) {
     pixel_metric = &IntensityCompare;
@@ -33,31 +34,30 @@ QImage ImageProcessing::SortImage(QString inputImagePath, int sortingAlg,
     pixel_metric = &HueCompare;
   }
 
-  QImage sorted_image;
-  auto start = std::chrono::high_resolution_clock::now();
+  // Determine function pointer to the implemented sorting algorithm thread
+  void (*sorting_thread)(std::shared_ptr<QImage>, int, int,
+                         bool (*metric)(QRgb, QRgb));
   if (sortingAlg == ImageSortEnum::BUBBLE_SORT) {
-    sorted_image = BubbleSort(input_image, &IntensityCompare, dualAxisSort);
+    sorting_thread = &BubbleSortThread;
   } else if (sortingAlg == ImageSortEnum::INSERTION_SORT) {
-    sorted_image = InsertionSort(input_image, pixel_metric, dualAxisSort);
+    sorting_thread = &InsertionSortThread;
   } else if (sortingAlg == ImageSortEnum::SELECTION_SORT) {
-    sorted_image = SelectionSort(input_image, pixel_metric, dualAxisSort);
+    sorting_thread = &SelectionSortThread;
   } else {
     emit displayError("Invalid sorting algorithm chosen");
+    return QImage();
   }
-  auto end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> time_taken = end - start;
-  emit sortingTimeTaken(time_taken.count());
 
-  return sorted_image;
-}
+  QImage sorted_image;
+  auto start = std::chrono::high_resolution_clock::now();
 
-QImage ImageProcessing::BubbleSort(std::shared_ptr<QImage> unsortedImage,
-                                   bool (*metric)(QColor, QColor),
-                                   bool dualAxisSort) {
+  /*
+   * Here begins the actual sorting and launching of threads
+   */
   const int max_threads = std::thread::hardware_concurrency();
   std::vector<std::thread> thread_vector;
 
-  int y_range = unsortedImage->height();
+  int y_range = input_image->height();
 
   for (int thread_num = 0; thread_num < max_threads; thread_num++) {
     int start = thread_num * y_range / max_threads;
@@ -65,8 +65,8 @@ QImage ImageProcessing::BubbleSort(std::shared_ptr<QImage> unsortedImage,
     if (end > y_range) {
       end = y_range;
     }
-    std::cout << "Start: " << start << "End: " << end << std::endl;
-    std::thread th(BubbleSortThread, unsortedImage, start, end, metric);
+
+    std::thread th(sorting_thread, input_image, start, end, pixel_metric);
     thread_vector.push_back(std::move(th));
   }
 
@@ -78,10 +78,10 @@ QImage ImageProcessing::BubbleSort(std::shared_ptr<QImage> unsortedImage,
 
   if (dualAxisSort) {
     // Attempt the transpose, sort again, then return the original image.
-    QImage x1 = unsortedImage->transformed(QMatrix().rotate(90.0));
-    unsortedImage->swap(x1);
+    QImage x1 = input_image->transformed(QMatrix().rotate(90.0));
+    input_image->swap(x1);
 
-    y_range = unsortedImage->height();
+    y_range = input_image->height();
 
     for (int thread_num = 0; thread_num < max_threads; thread_num++) {
       int start = thread_num * y_range / max_threads;
@@ -89,8 +89,8 @@ QImage ImageProcessing::BubbleSort(std::shared_ptr<QImage> unsortedImage,
       if (end > y_range) {
         end = y_range;
       }
-      std::cout << "Start: " << start << "End: " << end << std::endl;
-      std::thread th(BubbleSortThread, unsortedImage, start, end, metric);
+
+      std::thread th(sorting_thread, input_image, start, end, pixel_metric);
       thread_vector.push_back(std::move(th));
     }
 
@@ -101,23 +101,31 @@ QImage ImageProcessing::BubbleSort(std::shared_ptr<QImage> unsortedImage,
     }
 
     // Swap the data back, rotated correctly, and return
-    QImage x2 = unsortedImage->transformed(QMatrix().rotate(-90.0));
-    unsortedImage->swap(x2);
+    QImage x2 = input_image->transformed(QMatrix().rotate(-90.0));
+    input_image->swap(x2);
   }
 
-  return *unsortedImage;
+  sorted_image = *input_image;
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> time_taken = end - start;
+  emit sortingTimeTaken(time_taken.count());
+
+  return sorted_image;
 }
 
 void ImageProcessing::BubbleSortThread(std::shared_ptr<QImage> unsortedImage,
                                        int y_start, int y_end,
-                                       bool (*metric)(QColor, QColor)) {
+                                       bool (*metric)(QRgb, QRgb)) {
+
+  // TODO do we still want to use the QColor metric here?
+
   int x_range = unsortedImage->width();
   for (int j = y_start; j < y_end; j++) {
     for (int z = 0; z < x_range; z++) {
       for (int i = 0; i < x_range - 1; i++) {
         QColor a = unsortedImage->pixelColor(i, j);
         QColor b = unsortedImage->pixelColor(i + 1, j);
-        if (metric(a, b)) {
+        if (metric(a.rgb(), b.rgb())) {
           unsortedImage->setPixelColor(i + 1, j, a);
           unsortedImage->setPixelColor(i, j, b);
         } else {
@@ -126,67 +134,6 @@ void ImageProcessing::BubbleSortThread(std::shared_ptr<QImage> unsortedImage,
       }
     }
   }
-}
-
-QImage ImageProcessing::InsertionSort(std::shared_ptr<QImage> unsortedImage,
-                                      bool (*metric)(QRgb, QRgb),
-                                      bool dualAxisSort) {
-
-  // TODO all these parent functions are pretty much the same, could abstract
-  // into one parent function
-
-  const int max_threads = std::thread::hardware_concurrency();
-  std::vector<std::thread> thread_vector;
-
-  int y_range = unsortedImage->height();
-
-  for (int thread_num = 0; thread_num < max_threads; thread_num++) {
-    int start = thread_num * y_range / max_threads;
-    int end = (thread_num + 1) * y_range / max_threads;
-    if (end > y_range) {
-      end = y_range;
-    }
-    std::cout << "Start: " << start << "End: " << end << std::endl;
-    std::thread th(InsertionSortThread, unsortedImage, start, end, metric);
-    thread_vector.push_back(std::move(th));
-  }
-
-  for (std::thread &th : thread_vector) {
-    if (th.joinable()) {
-      th.join();
-    }
-  }
-
-  if (dualAxisSort) {
-    // Attempt the transpose, sort again, then return the original image.
-    QImage x1 = unsortedImage->transformed(QMatrix().rotate(90.0));
-    unsortedImage->swap(x1);
-
-    y_range = unsortedImage->height();
-
-    for (int thread_num = 0; thread_num < max_threads; thread_num++) {
-      int start = thread_num * y_range / max_threads;
-      int end = (thread_num + 1) * y_range / max_threads;
-      if (end > y_range) {
-        end = y_range;
-      }
-      std::cout << "Start: " << start << "End: " << end << std::endl;
-      std::thread th(InsertionSortThread, unsortedImage, start, end, metric);
-      thread_vector.push_back(std::move(th));
-    }
-
-    for (std::thread &th : thread_vector) {
-      if (th.joinable()) {
-        th.join();
-      }
-    }
-
-    // Swap the data back, rotated correctly, and return
-    QImage x2 = unsortedImage->transformed(QMatrix().rotate(-90.0));
-    unsortedImage->swap(x2);
-  }
-
-  return *unsortedImage;
 }
 
 void ImageProcessing::InsertionSortThread(std::shared_ptr<QImage> unsortedImage,
@@ -210,64 +157,6 @@ void ImageProcessing::InsertionSortThread(std::shared_ptr<QImage> unsortedImage,
       scan_line[t + 1] = temp;
     }
   }
-}
-
-QImage ImageProcessing::SelectionSort(std::shared_ptr<QImage> unsortedImage,
-                                      bool (*metric)(QRgb, QRgb),
-                                      bool dualAxisSort) {
-  // Still doing sorts per line, not globally, which means we an deploy threads
-  const int max_threads = std::thread::hardware_concurrency();
-  std::vector<std::thread> thread_vector;
-
-  int y_range = unsortedImage->height();
-
-  for (int thread_num = 0; thread_num < max_threads; thread_num++) {
-    int start = thread_num * y_range / max_threads;
-    int end = (thread_num + 1) * y_range / max_threads;
-    if (end > y_range) {
-      end = y_range;
-    }
-    std::cout << "Start: " << start << "End: " << end << std::endl;
-    std::thread th(SelectionSortThread, unsortedImage, start, end, metric);
-    thread_vector.push_back(std::move(th));
-  }
-
-  for (std::thread &th : thread_vector) {
-    if (th.joinable()) {
-      th.join();
-    }
-  }
-
-  if (dualAxisSort) {
-    // Attempt the transpose, sort again, then return the original image.
-    QImage x1 = unsortedImage->transformed(QMatrix().rotate(90.0));
-    unsortedImage->swap(x1);
-
-    y_range = unsortedImage->height();
-
-    for (int thread_num = 0; thread_num < max_threads; thread_num++) {
-      int start = thread_num * y_range / max_threads;
-      int end = (thread_num + 1) * y_range / max_threads;
-      if (end > y_range) {
-        end = y_range;
-      }
-      std::cout << "Start: " << start << "End: " << end << std::endl;
-      std::thread th(SelectionSortThread, unsortedImage, start, end, metric);
-      thread_vector.push_back(std::move(th));
-    }
-
-    for (std::thread &th : thread_vector) {
-      if (th.joinable()) {
-        th.join();
-      }
-    }
-
-    // Swap the data back, rotated correctly, and return
-    QImage x2 = unsortedImage->transformed(QMatrix().rotate(-90.0));
-    unsortedImage->swap(x2);
-  }
-
-  return *unsortedImage;
 }
 
 void ImageProcessing::SelectionSortThread(std::shared_ptr<QImage> unsortedImage,
@@ -294,16 +183,8 @@ void ImageProcessing::SelectionSortThread(std::shared_ptr<QImage> unsortedImage,
   }
 }
 
-bool ImageProcessing::IntensityCompare(QColor a, QColor b) {
-  return ((a.red() + a.green() + a.blue()) > (b.red() + b.green() + b.blue()));
-}
-
 bool ImageProcessing::IntensityCompare(QRgb a, QRgb b) {
   return ((qRed(a) + qGreen(a) + qBlue(a)) > (qRed(b) + qGreen(b) + qBlue(b)));
-}
-
-bool ImageProcessing::HueCompare(QColor a, QColor b) {
-  return a.hsvHue() > b.hsvHue();
 }
 
 bool ImageProcessing::HueCompare(QRgb a, QRgb b) {

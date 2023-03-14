@@ -11,7 +11,7 @@ Window {
     visible: true
     width: Theme.defaultWidth
     height: Theme.defaultWidth
-    title: qsTr("Hello World")
+    title: qsTr("QML RGB Image Sorter")
     property var selectedSort: ImageSortEnum.NONE
     property var selectedMetric: ImageSortEnum.RGB_INTENSITY
 
@@ -19,7 +19,7 @@ Window {
         target: frontEndObject
         // Traditional QML voodoo where "on" + capitalised signal connections to this slot
         onDisplayErrorPopup: {
-            errorText.text = errorMsg
+            errorPopup.text = errorMsg
             errorPopup.open()
         }
         onDisplaySortingTime: {
@@ -231,6 +231,7 @@ Window {
                 color: metricComboBox.down ? Theme.buttonPressed : metricComboBox.hovered ? Theme.buttonHovered : "transparent"
                 border.color: "black"
                 border.width: Theme.borderWidth
+                radius: Theme.radius
             }
 
             // This contains the elements of the combo box
@@ -274,44 +275,15 @@ Window {
         }
     }
 
-    Popup {
+    PopupError {
         id: errorPopup
-        width: Theme.popupWidth
-        height: Theme.popupHeight
-        anchors.centerIn: parent
-        modal: true
-        focus: true
-        background: Rectangle {
-            anchors.fill: parent
-            color: Theme.popupBackground
-            border.color: "black"
-            border.width: Theme.borderWidth
+    }
+    PopupConfirm {
+        id: confirmBubbleSortPopup
+        onAccepted: {
+            frontEndObject.processImage(selectedSort, selectedMetric,
+                                        dualAxisSort.isChecked)
         }
-
-        Text {
-            id: errorText
-            anchors.centerIn: parent
-            width: parent.width
-            text: ""
-            wrapMode: Text.Wrap
-        }
-        Button {
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            width: Theme.buttonWidth
-            height: Theme.buttonHeight
-            background: Rectangle {
-                radius: Theme.radius
-                color: parent.down ? Theme.buttonPressed : parent.hovered ? Theme.buttonHovered : "transparent"
-                border.color: "black"
-                border.width: Theme.borderWidth
-            }
-            text: "Ok"
-            onClicked: {
-                errorPopup.close()
-            }
-        }
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     }
 
     function radioButtonEnabling() {
@@ -333,8 +305,15 @@ Window {
 
         // Check the user has selected a sort
         if (selectedSort === ImageSortEnum.NONE) {
-            errorText.text = "No sort selected, please select one."
+            errorPopup.text = "No sort selected, please select one."
             errorPopup.open()
+            return
+        }
+
+        if (selectedSort == ImageSortEnum.BUBBLE_SORT) {
+            confirmBubbleSortPopup.text
+                    = "You have selected bubble sort, this is SLOW.\nDo you want to continue?"
+            confirmBubbleSortPopup.open()
             return
         }
 

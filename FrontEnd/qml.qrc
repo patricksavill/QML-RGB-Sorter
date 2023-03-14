@@ -3,5 +3,9 @@
         <file>main.qml</file>
         <file>Theme.js</file>
         <file>example-image.jpg</file>
+        <file>CustomRadioButton.qml</file>
+        <file>icons/arrow-resize.svg</file>
+        <file>PopupConfirm.qml</file>
+        <file>PopupError.qml</file>
     </qresource>
 </RCC>

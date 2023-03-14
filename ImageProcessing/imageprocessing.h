@@ -5,6 +5,8 @@
 #include <QString>
 #include <future>
 
+#include "imageenums.h"
+
 // We use a QObject class to allow for signal and slot connections
 class ImageProcessing : public QObject {
   Q_OBJECT
@@ -12,19 +14,16 @@ public:
   ImageProcessing();
 
   /*!
-   * \brief The SortAlgorithm enum is used by the front end to pass which
-   * algorithm a user has selected to use
-   */
-  enum SortAlgorithm { BUBBLE_SORT, SELECTION_SORT };
-
-  /*!
    * \brief SortImage Basic function to sort an image's pixels
    * \param inputImagePath Path to the image to sort
    * \param sortingAlg Integer corresponding to Enum of algorithms
    * Use as the switch to launch the sort as chosen by a user
+   * \param metricType Integer corresponding to Enum of pixel metric
+   * \param dualAxisSort boolean flag to sort along x and y if true
    * \return QImage with sorted pixels
    */
-  QImage SortImage(QString inputImagePath, int sortingAlg);
+  QImage SortImage(QString inputImagePath, int sortingAlg, int metricType,
+                   bool dualAxisSort);
 
 signals:
   /*!
@@ -44,10 +43,11 @@ private:
    * \brief BubbleSort Parent function to call bubble sort
    * \param unsortedImage Pointer to the unsorted QImage to sort
    * \param *metric Function pointer to the metric used for sorting
+   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
    * \return QImage, sorted
    */
   QImage BubbleSort(std::shared_ptr<QImage> unsortedImage,
-                    bool (*metric)(QColor, QColor));
+                    bool (*metric)(QColor, QColor), bool dualAxisSort);
 
   /*!
    * \brief BubbleSortThread thread to perform bubble sort with
@@ -62,12 +62,36 @@ private:
                                bool (*metric)(QColor, QColor));
 
   /*!
+   * \brief InsertionSort Parent function to call the Insertion sort threads
+   * \param unsortedImage Pointer to the unsorted QImage to sort
+   * \param *metric Function pointer to the metric used for sorting
+   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
+   * \return None, sort is done in place on the shared pointer
+   */
+  QImage InsertionSort(std::shared_ptr<QImage> unsortedImage,
+                       bool (*metric)(QRgb, QRgb), bool dualAxisSort);
+
+  /*!
+   * \brief InsertionSortThread thread to perform Insertion sort with
+   * \param unsortedImage Shared pointer to unsorted image
+   * \param y_start Vertical index to start on
+   * \param y_end Vertical index to end on
+   * \param *metric Function pointer to the metric used for sorting
+   * \return None, sort is done in place on the shared pointer
+   */
+  static void InsertionSortThread(std::shared_ptr<QImage> unsortedImage,
+                                  int y_start, int y_end,
+                                  bool (*metric)(QRgb, QRgb));
+
+  /*!
    * \brief SelectionSort Parent function to call the Selection sort threads
    * \param unsortedImage Pointer to the unsorted QImage to sort
-   * \return
+   * \param *metric Function pointer to the metric used for sorting
+   * \param dualAxisSort, boolean flag for sorting on x and y, not just x
+   * \return None, sort is done in place on the shared pointer
    */
   QImage SelectionSort(std::shared_ptr<QImage> unsortedImage,
-                       bool (*metric)(QRgb, QRgb));
+                       bool (*metric)(QRgb, QRgb), bool dualAxisSort);
 
   /*!
    * \brief SelectionSortThread thread to perform Selection sort with
@@ -98,6 +122,10 @@ private:
    * \return True if a > b
    * */
   static bool IntensityCompare(QRgb a, QRgb b);
+
+  static bool HueCompare(QColor a, QColor b);
+
+  static bool HueCompare(QRgb a, QRgb b);
 };
 
 #endif // IMAGEPROCESSING_H

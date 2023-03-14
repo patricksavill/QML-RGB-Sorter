@@ -5,8 +5,13 @@ LiveImage::LiveImage(QQuickItem *parent)
 
 void LiveImage::paint(QPainter *painter) {
   QRectF bounding_rect = boundingRect();
-  // TODO scale with preserved aspect ratio
-  QImage scaled = mImage.scaled(bounding_rect.width(), bounding_rect.height());
+
+  if (mImage.isNull()) {
+    return;
+  }
+
+  QImage scaled = mImage.scaled(bounding_rect.width(), bounding_rect.height(),
+                                Qt::KeepAspectRatio);
   QPointF center = bounding_rect.center() - scaled.rect().center();
 
   if (center.x() < 0)
@@ -14,7 +19,6 @@ void LiveImage::paint(QPainter *painter) {
   if (center.y() < 0)
     center.setY(0);
   painter->drawImage(center, scaled);
-  //    painter->drawImage(0, 0, m_image);
 }
 
 void LiveImage::SetImage(const QImage &image) {

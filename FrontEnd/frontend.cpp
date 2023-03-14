@@ -73,6 +73,7 @@ void FrontEnd::loadImage(QString filePath) {
   // later
   mSourceImagePath = local_path;
   updateImage(new_image, &this->mLoadedProvider);
+  emit imageLoaded();
 }
 
 void FrontEnd::processImage(int sortType, int metricType, bool dualAxisSort) {

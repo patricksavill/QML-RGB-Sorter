@@ -64,6 +64,11 @@ signals:
    */
   void displaySortingTime(QString sortingText);
 
+  /*!
+   * \brief imageLoaded Signal to QML indicating image load was successful
+   */
+  void imageLoaded();
+
 private:
   QString mSourceImagePath;
 };

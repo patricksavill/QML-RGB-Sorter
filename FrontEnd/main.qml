@@ -25,6 +25,9 @@ Window {
         onDisplaySortingTime: {
             sortingDurationText.text = sortingText
         }
+        onImageLoaded: {
+            srcImageHelpText.text = ""
+        }
     }
 
     Rectangle {
@@ -70,6 +73,7 @@ Window {
         border.color: "black"
         border.width: Theme.borderWidth
         Text {
+            id: srcImageHelpText
             anchors.centerIn: parent
             text: "No source image selected.\nDrag and drop a new image in."
         }

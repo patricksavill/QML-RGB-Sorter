@@ -143,7 +143,7 @@ void ImageProcessing::InsertionSortThread(std::shared_ptr<QImage> unsortedImage,
   QRgb *scan_line;
   for (int j = y_start; j < y_end; j++) {
     scan_line = (QRgb *)unsortedImage->scanLine(j);
-    for (int i = 1; i < x_range - 1; i++) {
+    for (int i = 1; i < x_range; i++) {
 
       QRgb temp = scan_line[i];
 
